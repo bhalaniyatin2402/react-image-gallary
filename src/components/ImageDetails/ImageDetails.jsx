@@ -8,9 +8,11 @@ import './ImageDetails.css'
 const imageUrl = 'https://1.bp.blogspot.com/-5guLEIH3TSA/TZTHVhH0emI/AAAAAAAAAwQ/JS8Rr_63SPg/s1600/Lcastillo_ReaderSketch01.jpg'
 
 function ImageDetails() {
-    const [ photoDetail, setPhotoDetail ] = useState({})
     const { id } = useParams()
-    const [ error, setError ] = useState(false)
+    const [ imageDetailState, setImageDetailState ] = useState({
+        photoDetail: {},
+        error: false
+    })
     
     async function imageDetail() {
         const response = await axios.get(`https://api.slingacademy.com/v1/sample-data/photos/${id}`)
@@ -22,10 +24,10 @@ function ImageDetails() {
             await axios.get(result.url)
         } catch (error) {
             if(error.response) {
-                setError(true)
+                setImageDetailState((state) => ({ ...state, error: true }))
             }
         }
-        setPhotoDetail(result)
+        setImageDetailState(state => ({ ...state, photoDetail: result }))
     }
 
     useEffect(() => {
@@ -37,11 +39,11 @@ function ImageDetails() {
     <div className="image-detail-wrapper">
         <div className="image-detail-card">
             <div className="image-detail-left">
-                {error ? <img src={imageUrl} alt="" /> : <img src={photoDetail.url} alt="" />}
+                {imageDetailState.error ? <img src={imageUrl} alt="" /> : <img src={imageDetailState.photoDetail.url} alt="" />}
             </div>
             <div className="image-detail-right">
-                <h2>{photoDetail.title}</h2>
-                <p>{photoDetail.description}</p>
+                <h2>{imageDetailState.photoDetail.title}</h2>
+                <p>{imageDetailState.photoDetail.description}</p>
             </div>
         </div>
     </div>
